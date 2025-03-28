@@ -1,0 +1,312 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #8c1c13;     /* Vinotinto */
+  --color-secondary: #5e3023;   /* Café oscuro */
+  --color-accent: #a15941;      /* Café medio */
+  --color-light: #e4d4c8;       /* Café claro */
+  --color-dark: #331711;        /* Café muy oscuro */
+}
+
+/* Estilos globales para la aplicación */
+body {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-title {
+  color: var(--color-secondary);
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.search-container {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--color-accent);
+  border-radius: 8px;
+  background-color: rgba(228, 212, 200, 0.2);
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.search-button {
+  padding: 12px 20px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: var(--color-secondary);
+}
+
+.search-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: var(--color-primary);
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color-secondary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.two-column-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .two-column-layout {
+    flex-direction: row;
+  }
+}
+
+.sidebar {
+  flex: 1;
+  background-color: rgba(228, 212, 200, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.scrollable-content {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.track-item:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.track-thumbnail {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-right: 12px;
+}
+
+.track-title {
+  color: var(--color-dark);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.action-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: 8px;
+}
+
+.play-button {
+  background-color: var(--color-primary);
+}
+
+.play-button:hover {
+  background-color: var(--color-secondary);
+}
+
+.remove-button {
+  background-color: var(--color-secondary);
+}
+
+.remove-button:hover {
+  background-color: var(--color-primary);
+}
+
+.floating-player {
+  position: absolute;
+  width: 300px;
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+  color: white;
+  z-index: 100;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.player-title {
+  font-weight: 500;
+  color: var(--color-light);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.close-button {
+  padding: 4px;
+  border-radius: 50%;
+  color: var(--color-light);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.close-button:hover {
+  background-color: rgba(51, 23, 17, 0.3);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(228, 212, 200, 0.3);
+  border-radius: 8px;
+  appearance: none;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.player-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.play-pause-button {
+  padding: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-light);
+  color: var(--color-secondary);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.play-pause-button:hover {
+  background-color: white;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+}
+
+.volume-label {
+  margin-right: 8px;
+  color: var(--color-light);
+}
+
+.volume-slider {
+  width: 80px;
+  height: 8px;
+  background-color: rgba(228, 212, 200, 0.3);
+  border-radius: 8px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.empty-message {
+  color: var(--color-secondary);
+  font-style: italic;
+}
+
+.result-container {
+  margin-bottom: 20px;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.result-item:hover {
+  background-color: rgba(228, 212, 200, 0.3);
+}
+
+.result-content {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.add-to-playlist-button {
+  padding: 8px 12px;
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-to-playlist-button:hover {
+  background-color: var(--color-secondary);
+}
