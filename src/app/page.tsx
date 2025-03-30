@@ -1,22 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from "react";
-import Image from 'next/image';
 
 declare global {
   interface Window {
     YT: {
-      Player: {
-        new (elementId: string, options: any): {
-          getCurrentTime: () => number;
-          getDuration: () => number;
-          getPlayerState: () => number;
-          playVideo: () => void;
-          pauseVideo: () => void;
-          seekTo: (seconds: number, allowSeekAhead: boolean) => void;
-          setVolume: (volume: number) => void;
-        };
-      };
+      Player: new (elementId: string, options: YTPlayerOptions) => YTPlayer;
       PlayerState: {
         ENDED: number;
         PLAYING: number;
@@ -53,7 +42,26 @@ interface YTPlayer {
   setVolume: (volume: number) => void;
 }
 
-// Type for search results
+interface YTPlayerOptions {
+  height: string | number;
+  width: string | number;
+  videoId: string;
+  playerVars?: {
+    autoplay?: number;
+    controls?: number;
+    disablekb?: number;
+    fs?: number;
+    iv_load_policy?: number;
+    modestbranding?: number;
+    [key: string]: unknown;
+  };
+  events?: {
+    onReady?: (event: { target: YTPlayer }) => void;
+    onStateChange?: (event: { data: number }) => void;
+    [key: string]: unknown;
+  };
+}
+
 interface SearchResult {
   id: {
     videoId: string;
@@ -169,7 +177,7 @@ export default function YouTubeAudioPlayer() {
         setResults([]);
         setError('No se encontraron resultados');
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error al buscar videos:', err);
       setError('No se pudo realizar la búsqueda. Inténtalo de nuevo.');
     } finally {
@@ -218,8 +226,7 @@ export default function YouTubeAudioPlayer() {
 
     setTimeout(() => {
       if (typeof window !== 'undefined' && window.YT) {
-        // Usando guion bajo para indicar que la variable no se va a utilizar directamente
-        const _player = new window.YT.Player(newTrack.id, {
+        const player = new window.YT.Player(newTrack.id, {
           height: "0",
           width: "0",
           videoId: newTrack.videoId,
@@ -296,7 +303,7 @@ export default function YouTubeAudioPlayer() {
               aud.player.playVideo();
               return { ...aud, isPlaying: true };
             }
-          } catch (error) {
+          } catch (error: unknown) {
             console.error('Error al alternar reproducción:', error);
             return aud;
           }
@@ -318,7 +325,7 @@ export default function YouTubeAudioPlayer() {
             }
             
             return { ...aud, progress: value };
-          } catch (error) {
+          } catch (error: unknown) {
             console.error('Error cambiando progreso:', error);
             return aud;
           }
@@ -338,7 +345,7 @@ export default function YouTubeAudioPlayer() {
             }
             
             return { ...aud, volume: value };
-          } catch (error) {
+          } catch (error: unknown) {
             console.error('Error cambiando volumen:', error);
             return aud;
           }
@@ -409,11 +416,9 @@ export default function YouTubeAudioPlayer() {
                     className="result-content"
                     onClick={() => playSelectedAudio(item)} 
                   >
-                    <Image 
+                    <img 
                       src={item.snippet.thumbnails.default.url} 
                       alt={item.snippet.title} 
-                      width={56}
-                      height={56}
                       className="track-thumbnail"
                     />
                     <p className="track-title">{item.snippet.title}</p>
@@ -436,7 +441,6 @@ export default function YouTubeAudioPlayer() {
         )}
 
         <div className="two-column-layout">
-          {/* Playlist (Izquierda) */}
           <div className="sidebar">
             <h3 className="section-title">Mi Playlist</h3>
             <div className="scrollable-content">
@@ -445,11 +449,9 @@ export default function YouTubeAudioPlayer() {
               ) : (
                 playlist.map((track) => (
                   <div key={track.id} className="track-item">
-                    <Image 
+                    <img 
                       src={track.thumbnail} 
                       alt={track.title} 
-                      width={56}
-                      height={56}
                       className="track-thumbnail"
                     />
                     <p className="track-title">{track.title}</p>
@@ -473,7 +475,6 @@ export default function YouTubeAudioPlayer() {
             </div>
           </div>
 
-          {/* Historial (Derecha) */}
           <div className="sidebar">
             <h3 className="section-title">Historial</h3>
             <div className="scrollable-content">
@@ -482,11 +483,9 @@ export default function YouTubeAudioPlayer() {
               ) : (
                 history.map((track) => (
                   <div key={track.id} className="track-item">
-                    <Image 
+                    <img 
                       src={track.thumbnail} 
                       alt={track.title} 
-                      width={56}
-                      height={56}
                       className="track-thumbnail"
                     />
                     <p className="track-title">{track.title}</p>
@@ -504,7 +503,6 @@ export default function YouTubeAudioPlayer() {
         </div>
       </div>
 
-      {/* Reproductores flotantes */}
       {floatingAudios.map((audio) => (
         <div
           key={audio.id}
