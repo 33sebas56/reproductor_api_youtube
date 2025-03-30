@@ -4,7 +4,13 @@ import { useState, useEffect, useCallback } from "react";
 
 declare global {
   interface Window {
-    YT: any;
+    YT: {
+      Player: any;
+      PlayerState: {
+        ENDED: number;
+        PLAYING: number;
+      };
+    };
     onYouTubeIframeAPIReady: () => void;
   }
 }
@@ -19,16 +25,42 @@ interface AudioTrack {
 interface FloatingAudio extends AudioTrack {
   x: number;
   y: number;
-  player: any;
+  player: YTPlayer | null;
   progress: number;
   duration: number;
   volume: number;
   isPlaying: boolean;
 }
 
+// Define a type for YouTube player to avoid "any"
+interface YTPlayer {
+  getCurrentTime: () => number;
+  getDuration: () => number;
+  getPlayerState: () => number;
+  playVideo: () => void;
+  pauseVideo: () => void;
+  seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+  setVolume: (volume: number) => void;
+}
+
+// Type for search results
+interface SearchResult {
+  id: {
+    videoId: string;
+  };
+  snippet: {
+    title: string;
+    thumbnails: {
+      default: {
+        url: string;
+      };
+    };
+  };
+}
+
 export default function YouTubeAudioPlayer() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [floatingAudios, setFloatingAudios] = useState<FloatingAudio[]>([]);
   const [playlist, setPlaylist] = useState<AudioTrack[]>([]);
   const [history, setHistory] = useState<AudioTrack[]>([]);
@@ -122,7 +154,7 @@ export default function YouTubeAudioPlayer() {
       
       const data = await response.json();
       if (data.items && data.items.length > 0) {
-        setResults(data.items);
+        setResults(data.items as SearchResult[]);
       } else {
         setResults([]);
         setError('No se encontraron resultados');
@@ -135,7 +167,7 @@ export default function YouTubeAudioPlayer() {
     }
   };
 
-  const playSelectedAudio = useCallback((audio: any) => {
+  const playSelectedAudio = useCallback((audio: SearchResult) => {
     floatingAudios.forEach(existingAudio => {
       if (existingAudio.player && typeof existingAudio.player.pauseVideo === 'function') {
         existingAudio.player.pauseVideo();
@@ -175,48 +207,51 @@ export default function YouTubeAudioPlayer() {
     );
 
     setTimeout(() => {
-      const player = new window.YT.Player(newTrack.id, {
-        height: "0",
-        width: "0",
-        videoId: newTrack.videoId,
-        playerVars: { 
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          iv_load_policy: 3,
-          modestbranding: 1
-        },
-        events: {
-          onReady: (event: any) => {
-            setFloatingAudios((prev) =>
-              prev.map((aud) =>
-                aud.id === newTrack.id
-                  ? {
-                      ...aud,
-                      player: event.target,
-                      duration: event.target.getDuration(),
-                    }
-                  : aud
-              )
-            );
+      if (typeof window !== 'undefined' && window.YT) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const player = new window.YT.Player(newTrack.id, {
+          height: "0",
+          width: "0",
+          videoId: newTrack.videoId,
+          playerVars: { 
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            iv_load_policy: 3,
+            modestbranding: 1
           },
-          onStateChange: (event: any) => {
-            if (event.data === window.YT.PlayerState.ENDED) {
+          events: {
+            onReady: (event: { target: YTPlayer }) => {
               setFloatingAudios((prev) =>
                 prev.map((aud) =>
-                  aud.id === newTrack.id ? { ...aud, isPlaying: false } : aud
+                  aud.id === newTrack.id
+                    ? {
+                        ...aud,
+                        player: event.target,
+                        duration: event.target.getDuration(),
+                      }
+                    : aud
                 )
               );
+            },
+            onStateChange: (event: { data: number }) => {
+              if (event.data === window.YT.PlayerState.ENDED) {
+                setFloatingAudios((prev) =>
+                  prev.map((aud) =>
+                    aud.id === newTrack.id ? { ...aud, isPlaying: false } : aud
+                  )
+                );
+              }
             }
-          }
-        },
-      });
+          },
+        });
+      }
     }, 500);
   }, [floatingAudios]);
 
   const handleDragStart = (e: React.MouseEvent, id: string) => {
-    const target = e.currentTarget;
+    const target = e.currentTarget as HTMLElement;
     const offsetX = e.clientX - target.getBoundingClientRect().left;
     const offsetY = e.clientY - target.getBoundingClientRect().top;
 
@@ -318,7 +353,7 @@ export default function YouTubeAudioPlayer() {
   };
 
   const playFromPlaylist = (track: AudioTrack) => {
-    const audioSearchResult = {
+    const audioSearchResult: SearchResult = {
       id: { videoId: track.videoId },
       snippet: {
         title: track.title,
