@@ -1,11 +1,22 @@
 'use client';
 
 import { useState, useEffect, useCallback } from "react";
+import Image from 'next/image';
 
 declare global {
   interface Window {
     YT: {
-      Player: any;
+      Player: {
+        new (elementId: string, options: any): {
+          getCurrentTime: () => number;
+          getDuration: () => number;
+          getPlayerState: () => number;
+          playVideo: () => void;
+          pauseVideo: () => void;
+          seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+          setVolume: (volume: number) => void;
+        };
+      };
       PlayerState: {
         ENDED: number;
         PLAYING: number;
@@ -32,7 +43,6 @@ interface FloatingAudio extends AudioTrack {
   isPlaying: boolean;
 }
 
-// Define a type for YouTube player to avoid "any"
 interface YTPlayer {
   getCurrentTime: () => number;
   getDuration: () => number;
@@ -208,8 +218,8 @@ export default function YouTubeAudioPlayer() {
 
     setTimeout(() => {
       if (typeof window !== 'undefined' && window.YT) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const player = new window.YT.Player(newTrack.id, {
+        // Usando guion bajo para indicar que la variable no se va a utilizar directamente
+        const _player = new window.YT.Player(newTrack.id, {
           height: "0",
           width: "0",
           videoId: newTrack.videoId,
@@ -399,9 +409,11 @@ export default function YouTubeAudioPlayer() {
                     className="result-content"
                     onClick={() => playSelectedAudio(item)} 
                   >
-                    <img 
+                    <Image 
                       src={item.snippet.thumbnails.default.url} 
                       alt={item.snippet.title} 
+                      width={56}
+                      height={56}
                       className="track-thumbnail"
                     />
                     <p className="track-title">{item.snippet.title}</p>
@@ -433,9 +445,11 @@ export default function YouTubeAudioPlayer() {
               ) : (
                 playlist.map((track) => (
                   <div key={track.id} className="track-item">
-                    <img 
+                    <Image 
                       src={track.thumbnail} 
                       alt={track.title} 
+                      width={56}
+                      height={56}
                       className="track-thumbnail"
                     />
                     <p className="track-title">{track.title}</p>
@@ -468,9 +482,11 @@ export default function YouTubeAudioPlayer() {
               ) : (
                 history.map((track) => (
                   <div key={track.id} className="track-item">
-                    <img 
+                    <Image 
                       src={track.thumbnail} 
                       alt={track.title} 
+                      width={56}
+                      height={56}
                       className="track-thumbnail"
                     />
                     <p className="track-title">{track.title}</p>
