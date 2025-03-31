@@ -1,39 +1,43 @@
-import axios from 'axios';
+import { NextResponse } from 'next/server';
 
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const query = searchParams.get('q');
+  
+  if (!query) {
+    return NextResponse.json(
+      { error: 'Query parameter is required' },
+      { status: 400 }
+    );
   }
 
-  const { q } = req.query;
-
-  if (!q || q.trim().length < 2) {
-    return res.status(400).json({ 
-      error: 'La búsqueda debe tener al menos 2 caracteres' 
-    });
+  const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+  
+  if (!YOUTUBE_API_KEY) {
+    return NextResponse.json(
+      { error: 'API key not configured' },
+      { status: 500 }
+    );
   }
 
   try {
-    const apiKey = process.env.YOUTUBE_API_KEY;
-    
-    const response = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search`, {
-        params: {
-          part: 'snippet',
-          q: q,
-          type: 'video',
-          key: apiKey,
-          maxResults: 5
-        }
-      }
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(query)}&type=video&key=${YOUTUBE_API_KEY}`
     );
     
-    return res.status(200).json(response.data);
-  } catch (error) {
-    console.error('Error en la API de YouTube:', error.response?.data || error.message);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('YouTube API error:', errorData);
+      throw new Error(errorData.error?.message || 'Error en la búsqueda de videos');
+    }
     
-    return res.status(500).json({ 
-      error: 'No se pudo realizar la búsqueda. Inténtalo de nuevo.' 
-    });
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('API route error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Error en la búsqueda de videos' },
+      { status: 500 }
+    );
   }
 }
