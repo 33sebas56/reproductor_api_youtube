@@ -157,28 +157,29 @@ export default function YouTubeAudioPlayer() {
       setError('La búsqueda debe tener al menos 2 caracteres');
       return;
     }
-
+  
     setIsLoading(true);
     setError(null);
-
+  
     try {
-      const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+      // Usar tu API propia en lugar de llamar directamente a YouTube
       const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${trimmedQuery}&type=video&key=${apiKey}&maxResults=5`
+        `/api/youtube?q=${encodeURIComponent(trimmedQuery)}`
       );
       
       if (!response.ok) {
-        throw new Error('Error en la búsqueda de videos');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error en la búsqueda de videos');
       }
       
       const data = await response.json();
       if (data.items && data.items.length > 0) {
-        setResults(data.items as SearchResult[]);
+        setResults(data.items);
       } else {
         setResults([]);
         setError('No se encontraron resultados');
       }
-    } catch (err: unknown) {
+    } catch (err) {
       console.error('Error al buscar videos:', err);
       setError('No se pudo realizar la búsqueda. Inténtalo de nuevo.');
     } finally {
@@ -234,7 +235,7 @@ export default function YouTubeAudioPlayer() {
           videoId: newTrack.videoId,
           playerVars: { 
             autoplay: 0,
-            controls: 0,
+            controls: 0, 
             disablekb: 1,
             fs: 0,
             iv_load_policy: 3,
@@ -266,7 +267,6 @@ export default function YouTubeAudioPlayer() {
           },
         });
         
-        // Usamos newPlayer en un console.log para evitar el warning
         console.log("Player created:", newPlayer ? "success" : "failed");
       }
     }, 500);
