@@ -39,5 +39,13 @@ export async function GET(request) {
       { error: error.message || 'Error en la búsqueda de videos' },
       { status: 500 }
     );
+
   }
+  return NextResponse.json(data, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    }
+  });
 }
