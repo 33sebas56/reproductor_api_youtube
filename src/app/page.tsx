@@ -393,7 +393,7 @@ export default function YouTubeAudioPlayer() {
   return (
     <div className="app-container">
       <div className="header-container">
-        <h1 className="page-title" onClick={() => alert('¡Bienvenido a BangTube! Tu música, tu ritmo.')}>BangTube</h1>
+        <h1 className="page-title" onClick={() => alert('¡Bienvenido a BangTube! Efectivamente no la pense bien al poner el nombre')}>BangTube</h1>
       </div>
       
       <div className="search-container">

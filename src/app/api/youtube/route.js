@@ -6,7 +6,7 @@ export async function GET(request) {
   
   if (!query) {
     return NextResponse.json(
-      { error: 'Query parameter is required' },
+      { error: 'Query psarameter is required' },
       { status: 400 }
     );
   }
@@ -33,7 +33,6 @@ export async function GET(request) {
     
     const data = await response.json();
     
-    // Devolver la respuesta con los headers CORS
     return NextResponse.json(data, {
       headers: {
         'Access-Control-Allow-Origin': '*',
