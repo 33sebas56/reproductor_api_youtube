@@ -32,20 +32,20 @@ export async function GET(request) {
     }
     
     const data = await response.json();
-    return NextResponse.json(data);
+    
+    // Devolver la respuesta con los headers CORS
+    return NextResponse.json(data, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      }
+    });
   } catch (error) {
     console.error('API route error:', error);
     return NextResponse.json(
       { error: error.message || 'Error en la búsqueda de videos' },
       { status: 500 }
     );
-
   }
-  return NextResponse.json(data, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  });
 }

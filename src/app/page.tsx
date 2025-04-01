@@ -160,28 +160,34 @@ export default function YouTubeAudioPlayer() {
   
     setIsLoading(true);
     setError(null);
+    
+    const apiUrl = `/api/youtube?q=${encodeURIComponent(trimmedQuery)}`;
+    console.log("Llamando a API:", apiUrl);
   
     try {
-      // Usar tu API propia en lugar de llamar directamente a YouTube
-      const response = await fetch(
-        `/api/youtube?q=${encodeURIComponent(trimmedQuery)}`
-      );
+      const response = await fetch(apiUrl);
+      console.log("Estado de respuesta:", response.status);
+      
+      const responseData = await response.json();
+      console.log("Datos de respuesta:", responseData);
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error en la búsqueda de videos');
+        setError(responseData.error || 'Error en la búsqueda de videos');
+        setResults([]);
+        return;
       }
       
-      const data = await response.json();
-      if (data.items && data.items.length > 0) {
-        setResults(data.items);
+      if (responseData.items && responseData.items.length > 0) {
+        console.log("Resultados encontrados:", responseData.items.length);
+        setResults(responseData.items);
       } else {
         setResults([]);
-        setError('No se encontraron resultados');
+        setError('No se encontraron resultados. Verifica tu búsqueda.');
       }
-    } catch (err) {
-      console.error('Error al buscar videos:', err);
-      setError('No se pudo realizar la búsqueda. Inténtalo de nuevo.');
+    } catch (error) {
+      console.error('Error de búsqueda:', error);
+      setError('No se pudo realizar la búsqueda. Revisa la consola para más detalles.');
+      setResults([]);
     } finally {
       setIsLoading(false);
     }
@@ -228,7 +234,6 @@ export default function YouTubeAudioPlayer() {
 
     setTimeout(() => {
       if (typeof window !== 'undefined' && window.YT) {
-        // Aquí estamos usando el valor de retorno del constructor para evitar el error de variable no utilizada
         const newPlayer = new window.YT.Player(newTrack.id, {
           height: "0",
           width: "0",
@@ -387,10 +392,12 @@ export default function YouTubeAudioPlayer() {
 
   return (
     <div className="app-container">
-      <h1 className="page-title"> BangTube</h1>
+      <div className="header-container">
+        <h1 className="page-title" onClick={() => alert('¡Bienvenido a BangTube! Tu música, tu ritmo.')}>BangTube</h1>
+      </div>
       
       <div className="search-container">
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <div className="search-wrapper">
           <input
             type="text"
             placeholder="Buscar canción..."
@@ -403,18 +410,17 @@ export default function YouTubeAudioPlayer() {
             onClick={searchVideo} 
             disabled={isLoading}
             className="search-button"
-            style={{ width: '100%' }}
           >
             {isLoading ? 'Buscando...' : 'Buscar'}
           </button>
         </div>
-
+  
         {error && <div className="error-message">{error}</div>}
-
+  
         {results.length > 0 && (
-          <div className="result-container">
+          <div className="results-section">
             <h3 className="section-title">Resultados</h3>
-            <div className="scrollable-content">
+            <div className="scrollable-results">
               {results.map((item) => (
                 <div key={item.id.videoId} className="result-item">
                   <div 
@@ -446,7 +452,7 @@ export default function YouTubeAudioPlayer() {
             </div>
           </div>
         )}
-
+  
         <div className="two-column-layout">
           <div className="sidebar">
             <h3 className="section-title">Mi Playlist</h3>
@@ -483,7 +489,7 @@ export default function YouTubeAudioPlayer() {
               )}
             </div>
           </div>
-
+  
           <div className="sidebar">
             <h3 className="section-title">Historial</h3>
             <div className="scrollable-content">
@@ -513,7 +519,7 @@ export default function YouTubeAudioPlayer() {
           </div>
         </div>
       </div>
-
+  
       {floatingAudios.map((audio) => (
         <div
           key={audio.id}
@@ -531,7 +537,7 @@ export default function YouTubeAudioPlayer() {
               ✕
             </button>
           </div>
-
+  
           <input
             type="range"
             min="0"
@@ -540,7 +546,7 @@ export default function YouTubeAudioPlayer() {
             onChange={(e) => handleProgressChange(audio.id, Number(e.target.value))}
             className="progress-bar"
           />
-
+  
           <div className="player-controls">
             <button 
               onClick={() => togglePlay(audio.id)}

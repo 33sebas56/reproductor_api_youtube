@@ -4,70 +4,136 @@
   --color-accent: #a15941;      /* Café medio */
   --color-light: #e4d4c8;       /* Café claro */
   --color-dark: #331711;        /* Café muy oscuro */
+  --color-gold: #d4af37;        /* Dorado para acentos elegantes */
+  --color-bg: #f5efe6;          /* Fondo más suave que reemplaza al blanco */
 }
 
 /* Estilos globales para la aplicación */
 body {
   background-color: var(--color-light);
   color: var(--color-dark);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Playfair Display', 'Georgia', serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 
 .app-container {
-  max-width: 1200px;
+  max-width: 900px; /* Reducido de 1200px */
   margin: 0 auto;
   padding: 20px;
 }
 
+/* Header con fondo */
+.header-container {
+  background-color: var(--color-light);
+  padding: 15px 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Logo con más personalidad */
 .page-title {
-  color: var(--color-secondary);
-  font-size: 2rem;
+  color: var(--color-primary);
+  font-size: 2.5rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin: 0;
+  padding: 10px 0;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-title::before {
+  content: "♪";
+  font-size: 1.5rem;
+  margin-right: 8px;
+  color: var(--color-gold);
+  vertical-align: middle;
+}
+
+.page-title::after {
+  content: "♫";
+  font-size: 1.5rem;
+  margin-left: 8px;
+  color: var(--color-gold);
+  vertical-align: middle;
+}
+
+.page-title:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
 }
 
 .search-container {
-  background-color: white;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-bg);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Barra de búsqueda centrada y más pequeña */
+.search-wrapper {
+  max-width: 350px;
+  margin: 0 auto 25px;
+  text-align: center;
 }
 
 .search-input {
   width: 100%;
-  padding: 12px;
-  border: 2px solid var(--color-accent);
-  border-radius: 8px;
-  background-color: rgba(228, 212, 200, 0.2);
+  padding: 14px 20px;
+  border: 1px solid var(--color-accent);
+  border-radius: 30px;
+  background-color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(140, 28, 19, 0.1);
 }
 
+/* Botón de búsqueda más pequeño */
 .search-button {
-  padding: 12px 20px;
+  width: 140px !important;
+  padding: 12px 24px;
   background-color: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  margin: 0 auto;
+  display: block;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.5px;
 }
 
 .search-button:hover {
   background-color: var(--color-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.search-button:active {
+  transform: translateY(0);
 }
 
 .search-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .error-message {
@@ -77,19 +143,65 @@ body {
   font-weight: 500;
 }
 
+/* Contenedor principal para resultados, playlist e historial */
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Sección de resultados */
+.results-section {
+  margin-bottom: 30px;
+  background-color: var(--color-bg);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
 .section-title {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: bold;
   color: var(--color-secondary);
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
   border-bottom: 2px solid var(--color-accent);
+  position: relative;
+  text-align: center;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background-color: var(--color-gold);
+}
+
+.scrollable-results {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) transparent;
+}
+
+.scrollable-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollable-results::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+  border-radius: 6px;
 }
 
 .two-column-layout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
 }
 
 @media (min-width: 768px) {
@@ -100,36 +212,62 @@ body {
 
 .sidebar {
   flex: 1;
-  background-color: rgba(228, 212, 200, 0.3);
-  border-radius: 8px;
-  padding: 16px;
+  background-color: var(--color-bg);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.sidebar:hover {
+  transform: translateY(-5px);
 }
 
 .scrollable-content {
-  max-height: 400px;
+  max-height: 300px;
   overflow-y: auto;
   padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) transparent;
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+  border-radius: 6px;
 }
 
 .track-item {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .track-item:hover {
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateX(5px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
 }
 
 .track-thumbnail {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
-  border-radius: 6px;
-  margin-right: 12px;
+  border-radius: 8px;
+  margin-right: 15px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.track-thumbnail:hover {
+  transform: scale(1.05);
 }
 
 .track-title {
@@ -138,24 +276,23 @@ body {
   position: relative;
   overflow: hidden;
   max-height: 3em;
-}
-
-.track-title::after {
-  content: "...";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: white; /* Ajusta al fondo del contenedor */
+  font-weight: 500;
 }
 
 .action-button {
-  padding: 6px 12px;
+  padding: 8px 14px;
   border: none;
-  border-radius: 6px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   margin-left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
 .play-button {
@@ -164,6 +301,7 @@ body {
 
 .play-button:hover {
   background-color: var(--color-secondary);
+  transform: scale(1.1);
 }
 
 .remove-button {
@@ -172,70 +310,90 @@ body {
 
 .remove-button:hover {
   background-color: var(--color-primary);
+  transform: scale(1.1);
 }
 
 .floating-player {
   position: absolute;
-  width: 300px;
+  width: 320px;
   background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
-  padding: 16px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   cursor: grab;
   color: white;
   z-index: 100;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .player-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .player-title {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-light);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  max-width: 240px;
 }
 
 .close-button {
-  padding: 4px;
+  padding: 6px;
   border-radius: 50%;
   color: var(--color-light);
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-button:hover {
-  background-color: rgba(51, 23, 17, 0.3);
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
 }
 
 .progress-bar {
   width: 100%;
-  height: 8px;
+  height: 10px;
   background-color: rgba(228, 212, 200, 0.3);
-  border-radius: 8px;
+  border-radius: 10px;
   appearance: none;
   cursor: pointer;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .player-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
 }
 
 .play-pause-button {
-  padding: 8px;
-  width: 40px;
-  height: 40px;
+  padding: 10px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,52 +402,69 @@ body {
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 1.1rem;
 }
 
 .play-pause-button:hover {
   background-color: white;
+  transform: scale(1.1);
 }
 
 .volume-control {
   display: flex;
   align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 20px;
 }
 
 .volume-label {
-  margin-right: 8px;
+  margin-right: 10px;
   color: var(--color-light);
+  font-weight: 500;
 }
 
 .volume-slider {
-  width: 80px;
+  width: 90px;
   height: 8px;
   background-color: rgba(228, 212, 200, 0.3);
-  border-radius: 8px;
+  border-radius: 10px;
   appearance: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-gold);
   cursor: pointer;
 }
 
 .empty-message {
   color: var(--color-secondary);
   font-style: italic;
-}
-
-.result-container {
-  margin-bottom: 20px;
+  text-align: center;
+  padding: 20px;
 }
 
 .result-item {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .result-item:hover {
-  background-color: rgba(228, 212, 200, 0.3);
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateX(5px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
 }
 
 .result-content {
@@ -300,15 +475,19 @@ body {
 }
 
 .add-to-playlist-button {
-  padding: 8px 12px;
+  padding: 6px 12px;
   background-color: var(--color-accent);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
 }
 
 .add-to-playlist-button:hover {
   background-color: var(--color-secondary);
+  transform: translateY(-2px);
 }
