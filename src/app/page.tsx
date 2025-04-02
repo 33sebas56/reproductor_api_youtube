@@ -514,7 +514,7 @@ export default function YouTubeAudioPlayer() {
   };
 
   return (
-    <div className="app-container">
+    <main className="app-container">
       <header className="header-container">
         <h1 className="page-title" 
             onClick={() => alert('¡Bienvenido a BangTube! Efectivamente no la pense bien al poner el nombre')}>
@@ -522,8 +522,8 @@ export default function YouTubeAudioPlayer() {
         </h1>
       </header>
       
-      <main className="search-container">
-        <div className="search-wrapper">
+      <section className="search-container">
+        <form className="search-wrapper" onSubmit={(e) => { e.preventDefault(); searchVideo(); }}>
           <input
             type="text"
             placeholder="Buscar canción..."
@@ -533,23 +533,23 @@ export default function YouTubeAudioPlayer() {
             onKeyPress={(e) => e.key === 'Enter' && searchVideo()}
           />
           <button 
-            onClick={searchVideo} 
+            type="submit"
             disabled={isLoading}
             className="search-button"
           >
             {isLoading ? 'Buscando...' : 'Buscar'}
           </button>
-        </div>
+        </form>
   
-        {error && <div className="error-message">{error}</div>}
+        {error && <p className="error-message">{error}</p>}
   
         {results.length > 0 && (
           <section className="results-section">
             <h3 className="section-title">Resultados</h3>
-            <div className="scrollable-results">
+            <ul className="scrollable-results">
               {results.map((item) => (
-                <div key={item.id.videoId} className="result-item">
-                  <div 
+                <li key={item.id.videoId} className="result-item">
+                  <article 
                     className="result-content"
                     onClick={() => playSelectedAudio(item)} 
                   >
@@ -561,7 +561,7 @@ export default function YouTubeAudioPlayer() {
                       className="track-thumbnail"
                     />
                     <p className="track-title">{item.snippet.title}</p>
-                  </div>
+                  </article>
                   <button 
                     onClick={() => addToPlaylist({
                       id: item.id.videoId,
@@ -573,15 +573,15 @@ export default function YouTubeAudioPlayer() {
                   >
                     + Playlist
                   </button>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         )}
   
-        <div className="two-column-layout">
-          <section className="sidebar playlist-sidebar">
-            <div className="playlist-header">
+        <section className="two-column-layout">
+          <aside className="sidebar playlist-sidebar">
+            <header className="playlist-header">
               <h3 className="section-title">Mi Playlist</h3>
               {playlist.length > 0 && (
                 <button 
@@ -591,32 +591,72 @@ export default function YouTubeAudioPlayer() {
                   {playlistActive ? '■ Detener' : '▶ Reproducir todo'}
                 </button>
               )}
-            </div>
+            </header>
             
             {playlistActive && (
-              <div className="playlist-status">
+              <p className="playlist-status">
                 Reproduciendo playlist: canción {currentPlaylistIndex + 1} de {playlist.length}
-              </div>
+              </p>
             )}
             
-            <div className="scrollable-content">
+            <nav className="scrollable-content">
               {playlist.length === 0 ? (
                 <p className="empty-message">No hay canciones en tu playlist</p>
               ) : (
-                playlist.map((track, index) => (
-                  <div 
-                    key={track.id} 
-                    className={`track-item ${playlistActive && index === currentPlaylistIndex ? 'now-playing' : ''}`}
-                  >
-                    <Image 
-                      src={track.thumbnail} 
-                      alt={track.title} 
-                      width={120}
-                      height={90}
-                      className="track-thumbnail"
-                    />
-                    <p className="track-title">{track.title}</p>
-                    <div className="track-controls">
+                <ul>
+                  {playlist.map((track, index) => (
+                    <li 
+                      key={track.id} 
+                      className={`track-item ${playlistActive && index === currentPlaylistIndex ? 'now-playing' : ''}`}
+                    >
+                      <Image 
+                        src={track.thumbnail} 
+                        alt={track.title} 
+                        width={120}
+                        height={90}
+                        className="track-thumbnail"
+                      />
+                      <p className="track-title">{track.title}</p>
+                      <span className="track-controls">
+                        <button 
+                          onClick={() => playFromPlaylist(track)}
+                          className="action-button play-button"
+                          aria-label="Reproducir"
+                        >
+                          ▶
+                        </button>
+                        <button 
+                          onClick={() => removeFromPlaylist(track.id)}
+                          className="action-button remove-button"
+                          aria-label="Eliminar"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </nav>
+          </aside>
+  
+          <aside className="sidebar history-sidebar">
+            <h3 className="section-title">Historial</h3>
+            <nav className="scrollable-content">
+              {history.length === 0 ? (
+                <p className="empty-message">No hay historial de reproducción</p>
+              ) : (
+                <ul>
+                  {history.map((track) => (
+                    <li key={track.id} className="track-item">
+                      <Image 
+                        src={track.thumbnail} 
+                        alt={track.title}
+                        width={120}
+                        height={90}
+                        className="track-thumbnail"
+                      />
+                      <p className="track-title">{track.title}</p>
                       <button 
                         onClick={() => playFromPlaylist(track)}
                         className="action-button play-button"
@@ -624,60 +664,24 @@ export default function YouTubeAudioPlayer() {
                       >
                         ▶
                       </button>
-                      <button 
-                        onClick={() => removeFromPlaylist(track.id)}
-                        className="action-button remove-button"
-                        aria-label="Eliminar"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                ))
+                    </li>
+                  ))}
+                </ul>
               )}
-            </div>
-          </section>
-  
-          <section className="sidebar history-sidebar">
-            <h3 className="section-title">Historial</h3>
-            <div className="scrollable-content">
-              {history.length === 0 ? (
-                <p className="empty-message">No hay historial de reproducción</p>
-              ) : (
-                history.map((track) => (
-                  <div key={track.id} className="track-item">
-                    <Image 
-                      src={track.thumbnail} 
-                      alt={track.title}
-                      width={120}
-                      height={90}
-                      className="track-thumbnail"
-                    />
-                    <p className="track-title">{track.title}</p>
-                    <button 
-                      onClick={() => playFromPlaylist(track)}
-                      className="action-button play-button"
-                      aria-label="Reproducir"
-                    >
-                      ▶
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
-        </div>
-      </main>
+            </nav>
+          </aside>
+        </section>
+      </section>
   
       {floatingAudios.map((audio) => (
-        <div
+        <article
           key={audio.id}
           onMouseDown={(e) => handleDragStart(e, audio.id)}
           className={`floating-player ${audio.isPlaylistMode ? 'playlist-mode' : ''} ${audio.isPlaylistMode && audio.playlistIndex === currentPlaylistIndex ? 'current-playlist-track' : ''}`}
           style={{ left: audio.x, top: audio.y }}
         >
-          <div id={audio.id} style={{ display: "none" }}></div>
-          <div className="player-header">
+          <span id={audio.id} style={{ display: "none" }}></span>
+          <header className="player-header">
             <p className="player-title">
               {audio.isPlaylistMode && `[${audio.playlistIndex! + 1}/${playlist.length}] `}
               {audio.title}
@@ -699,7 +703,7 @@ export default function YouTubeAudioPlayer() {
             >
               ✕
             </button>
-          </div>
+          </header>
   
           <input
             type="range"
@@ -711,7 +715,7 @@ export default function YouTubeAudioPlayer() {
             aria-label="Progreso de reproducción"
           />
   
-          <div className="player-controls">
+          <footer className="player-controls">
             <button 
               onClick={() => togglePlay(audio.id)}
               className="play-pause-button"
@@ -720,7 +724,7 @@ export default function YouTubeAudioPlayer() {
               {audio.isPlaying ? '❚❚' : '▶'}
             </button>
             
-            <div className="volume-control">
+            <span className="volume-control">
               <span className="volume-label">Vol</span>
               <input
                 type="range"
@@ -731,10 +735,10 @@ export default function YouTubeAudioPlayer() {
                 className="volume-slider"
                 aria-label="Control de volumen"
               />
-            </div>
-          </div>
-        </div>
+            </span>
+          </footer>
+        </article>
       ))}
-    </div>
+    </main>
   );
 }
